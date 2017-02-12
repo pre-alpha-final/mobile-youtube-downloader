@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cat l | sed 's/^/\.\/yd s "/' | sed 's/$/"/' > links.sh
+rm links.htm
+sh links.sh
+rm links.sh
+
+rm processed.html
+phantomjs save_page.js
+cat processed.html | sed 's/\&amp;/\&/g' > tmp_processed.html
+mv tmp_processed.html processed.html

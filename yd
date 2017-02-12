@@ -1,0 +1,87 @@
+#!/bin/bash
+
+function ExtractVideoBlock
+{
+  ENCODED1=$(echo "$WEBPAGE" | sed -e 's/,/ /g' | tr ' ' '\n' | grep "$1" | grep "$2")
+  echo "$ENCODED1" >> debug
+  echo "$ENCODED1" | wc -l >> debug
+  echo -e "$ENCODED1"
+  echo "" > /dev/null
+}
+
+function ExtractAudioBlock
+{
+  ENCODED1=$(echo "$WEBPAGE" | sed -e 's/,/ /g' | tr ' ' '\n' | grep "$1" | grep "$2" | sed 's/\(.*\)bitrate=\([0-9]*\)/\2 \1/' | sort -n | head -n2 | tail -n1)
+  echo "$ENCODED1" >> debug
+  echo "$ENCODED1" | wc -l >> debug
+  echo -e "$ENCODED1"
+  echo "" > /dev/null
+}
+
+function ExtractLink
+{
+  ENCODED1=$(echo "$1" | sed -e 's/url=/ /g' | sed -e 's/u0026/ /g' | tr ' ' '\n' | tr -d '\\' | grep "^http")
+  echo "$ENCODED1" >> debug
+  echo "$ENCODED1" | wc -l >> debug
+  ENCODED2=$(echo "$ENCODED1" | head -n1)
+  ENCODED3=$(wget -O- -q ###REPLACE###/trash/esc.php?url="$ENCODED2")
+  echo -e "$ENCODED3" >> debug
+  echo -e "$ENCODED3"
+  echo "" > /dev/null
+}
+
+function ExtractSignature
+{
+  SIGNATURE1=$(echo "$1" | sed -e 's/url=/ /g' | sed -e 's/u0026/ /g' | tr ' ' '\n' | tr -d '\\' | grep "s=" | grep -x '.\{80,90\}')
+  echo "$SIGNATURE1" >> debug
+  echo "$SIGNATURE1" | wc -l >> debug
+  SIGNATURE2=$(echo "$SIGNATURE1" | sed 's/s=\(.*\)/\1/')
+  echo "$SIGNATURE2" >> debug
+  SIGNATURE3=$(echo "$SIGNATURE2" | head -n1)
+  echo "$SIGNATURE3"
+  echo "" > /dev/null
+}
+
+function AddLink
+{
+  echo "<script>document.write(\"<a href=\\\"$1&signature=\");" >> links.htm
+  echo "var rrsignature = ao(\"$2\");" >> links.htm
+  echo "document.write(rrsignature);" >> links.htm
+  echo "document.write(\"&title=$3\");" >> links.htm
+  echo "document.write(\"\\\">$3</a></br>\");</script>" >> links.htm  
+}
+
+if [ "$2" == "" ]
+then
+ echo ""
+ echo SYNOPSIS
+ echo " usage $0 a|s|m URL"
+ echo ""
+ exit
+fi
+
+rm debug
+
+OPTION="$1"
+URL="$2"
+WEBPAGE=$(wget -q -O- "$URL")
+echo "$WEBPAGE" > debugWeb
+FILENAME=$(echo "$WEBPAGE" | grep "<meta name=\"title\"" | sed -e "s/.*content=\"\(.*\)\".*/\1/" | sed -e "s/&quot;//g" | sed -e "s/&#39;/_/g"\
+           | tr ":" "_" | tr "(" "_" | tr ")" "_" | tr "[" "_" | tr "]" "_" | tr " " "_" | tr "?" "_" | tr '\\' "_" | tr "/" "_" | tr "|" "_")
+LINK=""
+if [ "$LINK" == "" ]
+then
+  if [ "$OPTION" == "s" ]
+  then
+    BLOCK=$(ExtractVideoBlock =240p webm)
+    LINK=$(ExtractLink "$BLOCK")
+    SCRAMBLEDSIGNATURE=$(ExtractSignature "$BLOCK")
+    AddLink "$LINK" "$SCRAMBLEDSIGNATURE" "$FILENAME"_video
+
+    BLOCK=$(ExtractAudioBlock audio webm)
+    LINK=$(ExtractLink "$BLOCK")
+    SCRAMBLEDSIGNATURE=$(ExtractSignature "$BLOCK")
+    AddLink "$LINK" "$SCRAMBLEDSIGNATURE" "$FILENAME"_audio
+  exit
+  fi
+fi
