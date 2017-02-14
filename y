@@ -5,7 +5,7 @@ function ExtractLink
   ENCODED1=$(echo "$WEBPAGE" | sed -e 's/,/ /g' | tr ' ' '\n' | grep "$1" | grep "$2" | sed -e 's/url=/ /g' | sed -e 's/u0026/ /g' | tr ' ' '\n' | tr -d '\\' | grep "^http")
   echo "$ENCODED1" > debug
   echo "$ENCODED1" | wc -l >> debug
-  ENCODED2=$(echo "$ENCODED1" | head -n1)
+  ENCODED2=$(echo "$ENCODED1" | head -n1 | sed 's/"$//')
   ENCODED3=$(wget -O- -q ###REPLACE###/trash/esc.php?url="$ENCODED2")
   echo -e "$ENCODED3" >> debug
   echo -e "$ENCODED3"
@@ -19,7 +19,7 @@ function ExtractSignature
   echo "$SIGNATURE1" | wc -l >> debug
   SIGNATURE2=$(echo "$SIGNATURE1" | sed 's/s=\(.*\)/\1/')
   echo "$SIGNATURE2" >> debug
-  SIGNATURE3=$(echo "$SIGNATURE2" | head -n1)
+  SIGNATURE3=$(echo "$SIGNATURE2" | head -n1 | sed 's/"$//')
   echo "$SIGNATURE3"
   echo "" > /dev/null
 }
