@@ -27,5 +27,5 @@ FILES=$(find ./ -iname "*_video")
 for file in $FILES;
 do
   VIDEONAME=$(ExtractVideoName $file)
-  ffmpeg -i "$VIDEONAME"_video -i "$VIDEONAME"_audio -c copy ./joined/"$VIDEONAME".webm
+  ffmpeg -i "$VIDEONAME"_video -i "$VIDEONAME"_audio -c copy ./joined/"$VIDEONAME".mkv
 done
