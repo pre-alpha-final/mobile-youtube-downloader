@@ -74,11 +74,19 @@ then
   if [ "$OPTION" == "s" ]
   then
     BLOCK=$(ExtractVideoBlock =240p webm)
+    if [ "$BLOCK" == "" ]
+    then
+      BLOCK=$(ExtractVideoBlock =240p mp4)
+    fi
     LINK=$(ExtractLink "$BLOCK")
     SCRAMBLEDSIGNATURE=$(ExtractSignature "$BLOCK")
     AddLink "$LINK" "$SCRAMBLEDSIGNATURE" "$FILENAME"_video
 
-    BLOCK=$(ExtractAudioBlock audio webm)
+    BLOCK=$(ExtractAudioBlock audio webm 2)
+    if [ "$BLOCK" == "" ]
+    then
+      BLOCK=$(ExtractAudioBlock audio 2Fmp4 1)
+    fi
     LINK=$(ExtractLink "$BLOCK")
     SCRAMBLEDSIGNATURE=$(ExtractSignature "$BLOCK")
     AddLink "$LINK" "$SCRAMBLEDSIGNATURE" "$FILENAME"_audio
