@@ -67,7 +67,7 @@ URL="$2"
 WEBPAGE=$(wget -q -O- "$URL")
 echo "$WEBPAGE" > debugWeb
 FILENAME=$(echo "$WEBPAGE" | grep "<meta name=\"title\"" | sed -e "s/.*content=\"\(.*\)\".*/\1/" | sed -e "s/&quot;//g" | sed -e "s/&#39;/_/g"\
-           | tr ":" "_" | tr "(" "_" | tr ")" "_" | tr "[" "_" | tr "]" "_" | tr " " "_" | tr "?" "_" | tr '\\' "_" | tr "/" "_" | tr "|" "_")
+           | tr ":" "_" | tr "(" "_" | tr ")" "_" | tr "[" "_" | tr "]" "_" | tr " " "_" | tr "?" "_" | tr '\\' "_" | tr "/" "_" | tr "|" "_" | tr "\*" "_")
 LINK=""
 if [ "$LINK" == "" ]
 then
