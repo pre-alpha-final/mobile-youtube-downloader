@@ -60,7 +60,7 @@ then
 fi
 
 echo "<script>document.write(\"<a href=\\\"$LINK&signature=\");" >> links.htm
-echo "var rrsignature = \$m(\"$SCRAMBLEDSIGNATURE\");" >> links.htm
+echo "var rrsignature = XJ(\"$SCRAMBLEDSIGNATURE\");" >> links.htm
 echo "document.write(rrsignature);" >> links.htm
 echo "document.write(\"&title=$FILENAME\");" >> links.htm
 echo "document.write(\"\\\">$FILENAME</a></br>\");</script>" >> links.htm

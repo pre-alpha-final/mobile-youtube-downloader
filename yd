@@ -45,7 +45,7 @@ function ExtractSignature
 function AddLink
 {
   echo "<script>document.write(\"<a href=\\\"$1&signature=\");" >> links.htm
-  echo "var rrsignature = \$m(\"$2\");" >> links.htm
+  echo "var rrsignature = XJ(\"$2\");" >> links.htm
   echo "document.write(rrsignature);" >> links.htm
   echo "document.write(\"&title=$3\");" >> links.htm
   echo "document.write(\"\\\">$3</a></br>\");</script>" >> links.htm  
