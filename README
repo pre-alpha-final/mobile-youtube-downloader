@@ -1,3 +1,7 @@
 Scripts that use a mobile phone connected to a shell account (or a rooted phone) to download youtube videos. Names are shortened on purpose, to ease the use of terminal on the phone. 
 
 In all honesty there are many simpler solutions on the net, so i won't bother with explanations. Treat it as a proof of concept project. Email me if you really need it for something.
+
+In latest iteration of Youtube the magic line is:
+Vw=function(a,b,c){b=void 0===b?"":b;c=void 0===c?"":c;a=new Cv(a);a.set("alr","yes");c&&a.set(b,encodeURIComponent(Bv(decodeURIComponent(c))));return a};
+where "Bv" is the decoder.

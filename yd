@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 function ExtractVideoBlock
 {
@@ -32,10 +32,14 @@ function ExtractLink
 
 function ExtractSignature
 {
-  SIGNATURE1=$(echo "$1" | sed -e 's/url=/ /g' | sed -e 's/u0026/ /g' | sed -e 's/\&/ /g' | tr ' ' '\n' | tr -d '\\' | grep "s=" | grep -x '.\{80,90\}')
+  SIGURL=$(echo "$WEBPAGE" | sed -e 's/,/ /g' | tr ' ' '\n' | grep "$1" | grep "$2" | sed -e 's/url=/ /g')
+  echo "sig1: $SIGURL" >> debug
+  SIGURL=$(wget -O- -q ###REPLACE###/trash/esc.php?url="$SIGURL")
+  echo "sig2: $SIGURL" >> debug
+  SIGNATURE1=$(echo "$SIGURL" | sed -e 's/u0026/ /g' | sed -e 's/\&/ /g' | tr ' ' '\n' | tr -d '\\' | grep "^sig=" | grep -x '.\{80,120\}')
   echo "$SIGNATURE1" >> debug
   echo "$SIGNATURE1" | wc -l >> debug
-  SIGNATURE2=$(echo "$SIGNATURE1" | sed 's/s=\(.*\)/\1/')
+  SIGNATURE2=$(echo "$SIGNATURE1" | sed 's/sig=\(.*\)/\1/')
   echo "$SIGNATURE2" >> debug
   SIGNATURE3=$(echo "$SIGNATURE2" | head -n1 | sed 's/"$//')
   echo "$SIGNATURE3"
@@ -44,8 +48,8 @@ function ExtractSignature
 
 function AddLink
 {
-  echo "<script>document.write(\"<a href=\\\"$1&signature=\");" >> links.htm
-  echo "var rrsignature = XJ(\"$2\");" >> links.htm
+  echo "<script>document.write(\"<a href=\\\"$1&sig=\");" >> links.htm
+  echo "var rrsignature = encodeURIComponent(decodeURIComponent(Bv(\"$2\")));" >> links.htm
   echo "document.write(rrsignature);" >> links.htm
   echo "document.write(\"&title=$3\");" >> links.htm
   echo "document.write(\"\\\">$3</a></br>\");</script>" >> links.htm  
@@ -73,10 +77,10 @@ if [ "$LINK" == "" ]
 then
   if [ "$OPTION" == "s" ]
   then
-    BLOCK=$(ExtractVideoBlock =240p webm)
+    BLOCK=$(ExtractVideoBlock =360p webm)
     if [ "$BLOCK" == "" ]
     then
-      BLOCK=$(ExtractVideoBlock =240p mp4)
+      BLOCK=$(ExtractVideoBlock =360p mp4)
     fi
     LINK=$(ExtractLink "$BLOCK")
     SCRAMBLEDSIGNATURE=$(ExtractSignature "$BLOCK")
